@@ -2,6 +2,7 @@ package com.desafio.jumarket.Controllers
 
 import com.desafio.jumarket.DTOs.ProdutoDTO
 import com.desafio.jumarket.Services.ProdutoService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 class ProdutoController (private val produtoService: ProdutoService){
 
     @PostMapping
-    fun criarProdutos(@RequestBody produtoDTO: ProdutoDTO):ResponseEntity<ProdutoDTO>{
+    fun criarProdutos(@RequestBody @Valid produtoDTO: ProdutoDTO):ResponseEntity<ProdutoDTO>{
         val produto = produtoService.criarProduto(produtoDTO)
         return ResponseEntity(produto,HttpStatus.CREATED)
     }
@@ -32,37 +33,20 @@ class ProdutoController (private val produtoService: ProdutoService){
     @GetMapping("/{id}")
     fun buscarProdutoPorId(@PathVariable id: Long): ResponseEntity<ProdutoDTO>{
         val produto = produtoService.buscarProdutoPorId(id)
-        return if (produto != null) {
-            ResponseEntity(produto, HttpStatus.OK)
-        } else {
-            ResponseEntity(HttpStatus.NOT_FOUND)
-        }
+        return ResponseEntity(produto, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
     fun atualizerProduto(@PathVariable id: Long, @RequestBody produtoDto: ProdutoDTO)
     : ResponseEntity<ProdutoDTO>{
-        val produtoExistente = produtoService.buscarProdutoPorId(id)
-
-        return if (produtoExistente != null) {
-            val produtoAtualizado = produtoService.atualizarProduto(id, produtoDto)
-            ResponseEntity.ok(produtoAtualizado)
-        } else {
-            ResponseEntity.notFound().build()
-        }
-
+        val produtoAtualizado = produtoService.atualizarProduto(id, produtoDto)
+        return ResponseEntity.ok(produtoAtualizado)
     }
 
     @DeleteMapping("/{id}")
     fun deletarProduto(@PathVariable id : Long) : ResponseEntity<Unit>{
-        val produtoExistente = produtoService.buscarProdutoPorId(id)
-
-        return if (produtoExistente != null) {
-            produtoService.excluirProduto(id)
-            ResponseEntity.noContent().build()
-        } else {
-            ResponseEntity.notFound().build()
-        }
+        produtoService.excluirProduto(id)
+        return ResponseEntity.noContent().build()
     }
 
 }
