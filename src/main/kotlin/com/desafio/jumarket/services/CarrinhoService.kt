@@ -7,6 +7,7 @@ interface CarrinhoService {
 
     fun listarItensPorCliente(clienteId: Long): List<ItemCarrinhoDTO>
     fun excluirCarrinho(id: Long)
-    fun adicionarProduto(clienteId : Long, carrinhoId: Long, itemCarrinhoDTO: ItemCarrinhoDTO): CarrinhoDTO
-    fun removerProduto(carrinhoId: Long, produtoId: Long): CarrinhoDTO
+    fun adicionarProduto(carrinhoId: Long, itemCarrinhoDTO: ItemCarrinhoDTO): CarrinhoDTO
+    fun removerItem(carrinhoId: Long, itemId: Long): CarrinhoDTO
+    fun abrirCarrinho(clienteId: Long): CarrinhoDTO
 }

@@ -1,7 +1,11 @@
 package com.desafio.jumarket.services.impl
 
 import com.desafio.jumarket.dtos.CarrinhoDTO
+import com.desafio.jumarket.dtos.ClienteDTO
 import com.desafio.jumarket.dtos.ItemCarrinhoDTO
+import com.desafio.jumarket.dtos.ItemCarrinhoProdutoDTO
+import com.desafio.jumarket.exception.DataNotFoundException
+import com.desafio.jumarket.models.Carrinho
 import com.desafio.jumarket.models.ItemCarrinho
 import com.desafio.jumarket.repositories.CarrinhoRepository
 import com.desafio.jumarket.repositories.ClienteRepository
@@ -14,18 +18,36 @@ class CarrinhoServiceImp(
     private val carrinhoRepository: CarrinhoRepository,
     private val clienteRepository: ClienteRepository,
     private val produtoRepository: ProdutoRepository
-) : CarrinhoService{
+) : CarrinhoService {
+
+    override fun abrirCarrinho(clienteId: Long): CarrinhoDTO {
+        val cliente = clienteRepository.findById(clienteId)
+            .orElseThrow { DataNotFoundException("Cliente não encontrado") }
+
+        val carrinho = carrinhoRepository.save(Carrinho(cliente = cliente))
+
+        return carrinho.let {
+            CarrinhoDTO(
+                id = it.id,
+                cliente = it.cliente.run { ClienteDTO(id, nome, cpf) }
+            )
+        }
+    }
 
     override fun listarItensPorCliente(clienteId: Long): List<ItemCarrinhoDTO> {
-        val cliente = clienteRepository.findById(clienteId)
-            .orElseThrow { RuntimeException("Cliente não encontrado") }
+
+        val existeCliente = clienteRepository.existsById(clienteId)
+        if (!existeCliente) {
+            throw DataNotFoundException("Cliente não encontrado")
+        }
 
         val carrinhosDoCliente = carrinhoRepository.findByCliente(clienteId)
 
         val itensCarrinho = carrinhosDoCliente.flatMap { carrinho ->
             carrinho.itens.map { itemCarrinho ->
                 ItemCarrinhoDTO(
-                    produtoId = itemCarrinho.produto.id,
+                    id = itemCarrinho.id,
+                    produto = itemCarrinho.produto.run { ItemCarrinhoProdutoDTO(id!!, nome) },
                     quantidade = itemCarrinho.quantidade
                 )
             }
@@ -35,56 +57,60 @@ class CarrinhoServiceImp(
     }
 
     override fun excluirCarrinho(id: Long) {
+        getCarrinho(id)
         carrinhoRepository.deleteById(id)
     }
 
-    override fun adicionarProduto(clienteId: Long, carrinhoId: Long, itemCarrinhoDTO: ItemCarrinhoDTO): CarrinhoDTO {
-        val cliente = clienteRepository.findById(clienteId)
-            .orElseThrow { RuntimeException("Cliente não encontrado") }
+    override fun adicionarProduto(carrinhoId: Long, itemCarrinhoDTO: ItemCarrinhoDTO): CarrinhoDTO {
+        var carrinho = getCarrinho(carrinhoId)
 
-        val carrinho = carrinhoRepository.findByCliente(clienteId)
-            .find { it.id == carrinhoId }
-            ?: throw RuntimeException("Carrinho não encontrado para o cliente informado")
-
-        val produto = produtoRepository.findById(itemCarrinhoDTO.produtoId!!)
-            .orElseThrow { RuntimeException("Produto não encontrado") }
+        val produto = produtoRepository.findById(itemCarrinhoDTO.produto.id)
+            .orElseThrow { DataNotFoundException("Produto não encontrado") }
 
         val itemCarrinho = ItemCarrinho(produto = produto, quantidade = itemCarrinhoDTO.quantidade)
         carrinho.itens.add(itemCarrinho)
 
-        val carrinhoAtualizado = carrinhoRepository.save(carrinho)
+        carrinho = carrinhoRepository.save(carrinho)
 
-        return CarrinhoDTO(
-            id = carrinhoAtualizado.id,
-            clienteId = carrinhoAtualizado.cliente.id,
-            produtos = carrinhoAtualizado.itens.map { item ->
-                ItemCarrinhoDTO(
-                    produtoId = item.produto.id,
-                    quantidade = item.quantidade
-                )
-            }
-        )
+        return carrinho.let {
+            CarrinhoDTO(
+                id = it.id,
+                cliente = it.cliente.run { ClienteDTO(id, nome, cpf) },
+                produtos = it.itens.map { item ->
+                    ItemCarrinhoDTO(
+                        id = item.id,
+                        produto = item.produto.run { ItemCarrinhoProdutoDTO(id!!, nome) },
+                        quantidade = item.quantidade
+                    )
+                }
+            )
+        }
     }
 
-    override fun removerProduto(carrinhoId: Long, produtoId: Long): CarrinhoDTO {
-        val carrinho = carrinhoRepository.findById(carrinhoId)
-            .orElseThrow { RuntimeException("Carrinho não encontrado") }
+    override fun removerItem(carrinhoId: Long, itemId: Long): CarrinhoDTO {
+        val carrinho = getCarrinho(carrinhoId)
 
-        val itemCarrinho = carrinho.itens.find { it.produto.id == produtoId }
-            ?: throw RuntimeException("Produto não encontrado no carrinho")
+        val itemCarrinho = carrinho.itens.find { it.id == itemId }
+            ?: throw DataNotFoundException("Item não encontrado no carrinho")
 
         carrinho.itens.remove(itemCarrinho)
         carrinhoRepository.save(carrinho)
 
-        return CarrinhoDTO(
-            id = carrinho.id,
-            clienteId = carrinho.cliente.id,
-            produtos = carrinho.itens.map { item ->
-                ItemCarrinhoDTO(
-                    produtoId = item.produto.id,
-                    quantidade = item.quantidade
-                )
-            }
-        )
+        return carrinho.let {
+            CarrinhoDTO(
+                id = it.id,
+                cliente = it.cliente.run { ClienteDTO(id, nome, cpf) },
+                produtos = it.itens.map { item ->
+                    ItemCarrinhoDTO(
+                        id = item.id,
+                        produto = item.produto.run { ItemCarrinhoProdutoDTO(id!!, nome) },
+                        quantidade = item.quantidade
+                    )
+                }
+            )
+        }
     }
+
+    fun getCarrinho(carrinhoId: Long) = carrinhoRepository.findById(carrinhoId)
+        .orElseThrow { DataNotFoundException("Carrinho não encontrado") }
 }
