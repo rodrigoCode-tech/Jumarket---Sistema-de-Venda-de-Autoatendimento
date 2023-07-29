@@ -4,16 +4,16 @@ import com.desafio.jumarket.DTOs.ClienteDTO
 import com.desafio.jumarket.Models.Cliente
 import com.desafio.jumarket.Repositories.ClienteRepository
 import com.desafio.jumarket.Services.ClienteService
+import com.desafio.jumarket.exception.CpfJaCadastradoException
+import com.desafio.jumarket.exception.DataNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
 class ClienteServiceImpl(private val clienteRepository: ClienteRepository): ClienteService {
 
     override fun criarCliente(clienteDTO: ClienteDTO): ClienteDTO {
-        val clienteExistente = clienteRepository.findByCpf(clienteDTO.cpf)
-        if (clienteExistente != null) {
-            throw RuntimeException("Cliente com CPF ${clienteDTO.cpf} já existe")
-        }
+        clienteRepository.findFirstByCpf(clienteDTO.cpf)
+            .ifPresent{throw CpfJaCadastradoException("Cliente com CPF ${clienteDTO.cpf} já existe")}
         val cliente = Cliente(
             nome = clienteDTO.nome,
             cpf = clienteDTO.cpf
@@ -30,7 +30,7 @@ class ClienteServiceImpl(private val clienteRepository: ClienteRepository): Clie
 
     override fun buscarClientePorId(id: Long): ClienteDTO? {
         val cliente = clienteRepository.findById(id).
-            orElseThrow{RuntimeException("CLiente não encontrado")}
+            orElseThrow{DataNotFoundException("Cliente não encontrado")}
         return cliente?.let {
             ClienteDTO(
                 id = it.id,
@@ -53,7 +53,7 @@ class ClienteServiceImpl(private val clienteRepository: ClienteRepository): Clie
 
     override fun atualizarCliente(id: Long, clienteDTO: ClienteDTO): ClienteDTO? {
         val cliente = clienteRepository.findById(id).
-        orElseThrow{RuntimeException("CLiente não encontrado")}
+        orElseThrow{DataNotFoundException("Cliente não encontrado")}
 
         cliente.apply {
             nome = clienteDTO.nome
@@ -71,7 +71,7 @@ class ClienteServiceImpl(private val clienteRepository: ClienteRepository): Clie
 
     override fun excluirCliente(id: Long){
         val cliente = clienteRepository.findById(id)
-            .orElseThrow { RuntimeException("CLiente não encontrado") }
+            .orElseThrow { DataNotFoundException("CLiente não encontrado") }
 
         clienteRepository.delete(cliente)
     }

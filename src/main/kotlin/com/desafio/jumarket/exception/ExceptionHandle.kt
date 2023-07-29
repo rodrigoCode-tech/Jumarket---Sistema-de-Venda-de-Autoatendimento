@@ -13,4 +13,9 @@ class ExceptionHandle : ResponseEntityExceptionHandler() {
     fun handleNotFoundException(exception : DataNotFoundException) : ResponseEntity<Any>{
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
+
+    @ExceptionHandler
+    fun handleCpfJaCadastradoException(exception : CpfJaCadastradoException) : ResponseEntity<Any>{
+        return ResponseEntity.badRequest().body(exception.message)
+    }
 }
