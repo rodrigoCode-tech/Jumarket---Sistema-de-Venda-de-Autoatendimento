@@ -7,11 +7,11 @@ data class Produto(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long = 0,
-    val nome : String,
-    val unidadeDeMedida : String,
-    val precoUnitario : Double,
+    val id : Long? = null,
+    var nome : String,
+    var unidadeDeMedida : String,
+    var precoUnitario : Double,
 
     @ManyToOne
-    val categoria: Categoria
+    var categoria: Categoria
 )

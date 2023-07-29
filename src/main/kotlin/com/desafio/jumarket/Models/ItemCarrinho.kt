@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne
 data class ItemCarrinho(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     @ManyToOne
     val produto: Produto,

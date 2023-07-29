@@ -7,12 +7,12 @@ data class Carrinho(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long = 0,
+    val id: Long? = null,
 
     @OneToOne
     val cliente: Cliente,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    val produtos : MutableList<ItemCarrinho> = mutableListOf()
+    val itens: MutableList<ItemCarrinho> = mutableListOf()
 
 )

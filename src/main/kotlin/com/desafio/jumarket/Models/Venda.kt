@@ -8,7 +8,7 @@ data class Venda(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long = 0,
+    val id : Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carrinho_id", nullable = false)

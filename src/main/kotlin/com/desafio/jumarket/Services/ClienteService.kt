@@ -7,5 +7,5 @@ interface ClienteService {
     fun buscarClientePorId(id: Long): ClienteDTO?
     fun listarClientes(): List<ClienteDTO>
     fun atualizarCliente(id: Long, clienteDTO: ClienteDTO): ClienteDTO?
-    fun excluirCliente(id: Long,clienteDTO: ClienteDTO): ClienteDTO?
+    fun excluirCliente(id: Long,clienteDTO: ClienteDTO)
 }

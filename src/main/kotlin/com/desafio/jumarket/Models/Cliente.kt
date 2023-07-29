@@ -10,7 +10,7 @@ data class Cliente(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long = 0,
-    val nome : String,
-    val cpf : String
+    val id : Long? = null,
+    var nome : String,
+    var cpf : String
 )

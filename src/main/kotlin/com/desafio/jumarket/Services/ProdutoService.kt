@@ -7,5 +7,5 @@ interface ProdutoService {
     fun buscarProdutoPorId(id: Long): ProdutoDTO?
     fun listarProdutos(): List<ProdutoDTO>
     fun atualizarProduto(id: Long, produtoDTO: ProdutoDTO): ProdutoDTO?
-    fun excluirProduto(id: Long)
+    fun excluirProduto(id: Long, produtoDTO: ProdutoDTO)
 }

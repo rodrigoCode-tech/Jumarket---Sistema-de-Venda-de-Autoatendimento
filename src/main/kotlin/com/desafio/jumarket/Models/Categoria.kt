@@ -11,6 +11,6 @@ data class Categoria(
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    val id : Long = 0,
-    val nome : String
+    val id : Long? = null,
+    var nome : String
 )
