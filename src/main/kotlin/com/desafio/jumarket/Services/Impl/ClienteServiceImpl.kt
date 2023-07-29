@@ -69,7 +69,7 @@ class ClienteServiceImpl(private val clienteRepository: ClienteRepository): Clie
         )
     }
 
-    override fun excluirCliente(id: Long, clienteDTO: ClienteDTO){
+    override fun excluirCliente(id: Long){
         val cliente = clienteRepository.findById(id)
             .orElseThrow { RuntimeException("CLiente não encontrado") }
 

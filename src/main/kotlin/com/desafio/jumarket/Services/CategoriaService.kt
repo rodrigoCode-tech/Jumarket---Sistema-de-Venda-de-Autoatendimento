@@ -7,6 +7,6 @@ interface CategoriaService {
     fun buscarCategoriaPorId(id: Long): CategoriaDTO?
     fun listarCategorias(): List<CategoriaDTO>
     fun atualizarCategoria(id: Long, categoriaDTO: CategoriaDTO): CategoriaDTO?
-    fun excluirCategoria(id: Long, categoriaDTO: CategoriaDTO)
+    fun excluirCategoria(id: Long)
 
 }

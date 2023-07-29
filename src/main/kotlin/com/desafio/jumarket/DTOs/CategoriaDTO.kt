@@ -1,7 +1,9 @@
 package com.desafio.jumarket.DTOs
 
-data class CategoriaDTO(
+import jakarta.validation.constraints.NotBlank
 
+data class CategoriaDTO(
     val id: Long?,
+    @field:NotBlank
     val nome: String
 )

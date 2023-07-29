@@ -4,6 +4,7 @@ import com.desafio.jumarket.DTOs.CategoriaDTO
 import com.desafio.jumarket.Models.Categoria
 import com.desafio.jumarket.Repositories.CategoriaRepository
 import com.desafio.jumarket.Services.CategoriaService
+import com.desafio.jumarket.exception.DataNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +18,7 @@ class CategoriaServiceImpl(private val categoriaRepository: CategoriaRepository)
 
     override fun buscarCategoriaPorId(id: Long): CategoriaDTO? {
         val categoria = categoriaRepository.findById(id)
-            .orElseThrow { RuntimeException("Categoria não encontrada") }
+            .orElseThrow { DataNotFoundException("Categoria não encontrada") }
         return categoria.let { CategoriaDTO(it.id, it.nome) }
     }
 
@@ -28,19 +29,17 @@ class CategoriaServiceImpl(private val categoriaRepository: CategoriaRepository)
 
     override fun atualizarCategoria(id: Long, categoriaDTO: CategoriaDTO): CategoriaDTO? {
         val categoria = categoriaRepository.findById(id)
-            .orElseThrow { RuntimeException("Categoria não encontrada") }
+            .orElseThrow { DataNotFoundException("Categoria não encontrada") }
 
-        if (categoria != null) {
             categoria.nome = categoriaDTO.nome
             val categoriaAtualizada = categoriaRepository.save(categoria)
             return CategoriaDTO(categoriaAtualizada.id, categoriaAtualizada.nome)
-        }
-        return null
+
     }
 
-    override fun excluirCategoria(id: Long,categoriaDTO: CategoriaDTO) {
+    override fun excluirCategoria(id: Long) {
         val categoria = categoriaRepository.findById(id)
-            .orElseThrow { RuntimeException("Categoria não encontrada") }
+            .orElseThrow { DataNotFoundException("Categoria não encontrada") }
 
         categoriaRepository.delete(categoria)
     }

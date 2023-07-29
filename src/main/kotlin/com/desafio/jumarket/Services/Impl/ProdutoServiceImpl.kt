@@ -86,7 +86,7 @@ class ProdutoServiceImpl(
         )
     }
 
-    override fun excluirProduto(id: Long,produtoDTO: ProdutoDTO) {
+    override fun excluirProduto(id: Long) {
         val produto = produtoRepository.findById(id)
             .orElseThrow { RuntimeException("Produto não encontrado")}
 
