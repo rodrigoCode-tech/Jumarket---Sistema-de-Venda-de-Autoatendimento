@@ -79,7 +79,7 @@ class CarrinhoServiceImpTest {
     fun `Testar Remover Produtos`(){
         val cliente = getCliente()
         val carrinho = getCarrinho(cliente)
-        carrinho.itens.add(ItemCarrinho(id = 1,produto = getProduto(), quantidade = 2))
+        carrinho.itens.add(ItemCarrinho(id = 1,produto = getProduto(), quantidade = 2, carrinho = carrinho))
 
         `when`(carrinhoRepository.findById(any())).thenReturn(Optional.of(carrinho))
         val result = carrinhoService.removerItem(1L, 1L)
@@ -104,7 +104,7 @@ class CarrinhoServiceImpTest {
     fun `testar Listar itens do carrinho`(){
         val cliente = getCliente()
         val carrinho = getCarrinho(cliente)
-        carrinho.itens.add(ItemCarrinho(id = 1,produto = getProduto(), quantidade = 2))
+        carrinho.itens.add(ItemCarrinho(id = 1,produto = getProduto(), quantidade = 2, carrinho = carrinho))
 
         `when`(clienteRepository.existsById(any())).thenReturn(true)
         `when`(carrinhoRepository.findByCliente(anyLong())).thenReturn(listOf(carrinho))

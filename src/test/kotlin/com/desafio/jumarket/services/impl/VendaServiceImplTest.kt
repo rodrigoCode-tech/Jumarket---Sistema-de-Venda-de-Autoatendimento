@@ -41,6 +41,7 @@ class VendaServiceImplTest {
         )
         val itemVendaDTO =
             ItemVendaDTO(produto = ItemVendaProdutoDTO(id = 1L, nome = "Produto de Teste"), quantidade = 2)
+        val carrinho = Carrinho(cliente = cliente)
         val itemCarrinho = ItemCarrinho(
             produto = Produto(
                 id = itemVendaDTO.produto.id,
@@ -48,15 +49,16 @@ class VendaServiceImplTest {
                 categoria = Categoria(id = 1L, nome = "Categoria Teste"),
                 unidadeDeMedida = "kg",
                 precoUnitario = 10.0
-            ), quantidade = itemVendaDTO.quantidade
+            ), quantidade = itemVendaDTO.quantidade,
+            carrinho = carrinho
         )
-        val carrinho = Carrinho(cliente = cliente, itens = mutableListOf(itemCarrinho))
+        carrinho.itens.addAll(mutableListOf(itemCarrinho))
         val venda = Venda(
             cliente = cliente,
-            itens = mutableListOf(ItemVenda(produto = produto, quantidade = itemVendaDTO.quantidade)),
             valorTotal = 20.0,
             formaDePagamento = FormaDePagamento.PIX
         )
+        venda.itens.add(ItemVenda(produto = produto, quantidade = itemVendaDTO.quantidade,venda = venda))
 
         `when`(carrinhoRepository.findById(carrinhoId)).thenReturn(Optional.of(carrinho))
         `when`(vendaRepository.save(any(Venda::class.java))).thenReturn(venda)
@@ -86,11 +88,10 @@ class VendaServiceImplTest {
         val venda = Venda(
             id = 1L,
             cliente = cliente,
-            itens = mutableListOf(ItemVenda(produto = produto, quantidade = itemVenda.quantidade)),
             valorTotal = 20.0,
             formaDePagamento = FormaDePagamento.DINHEIRO
         )
-
+        venda.itens.add(ItemVenda(produto = produto, quantidade = itemVenda.quantidade,venda = venda))
         `when`(vendaRepository.findAll()).thenReturn(listOf(venda))
 
  
