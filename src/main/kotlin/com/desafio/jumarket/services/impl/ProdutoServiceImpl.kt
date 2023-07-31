@@ -70,7 +70,7 @@ class ProdutoServiceImpl(
 
     override fun atualizarProduto(id: Long, produtoDTO: ProdutoDTO): ProdutoDTO? {
         var produto = produtoRepository.findById(id)
-            .orElseThrow { RuntimeException("Produto não encontrado") }
+            .orElseThrow { DataNotFoundException("Produto não encontrado") }
 
         produto.apply {
             nome = produtoDTO.nome
