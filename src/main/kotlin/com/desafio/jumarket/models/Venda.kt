@@ -15,7 +15,7 @@ data class Venda(
     val valorTotal : Double,
     @Enumerated(EnumType.STRING)
     val formaDePagamento : FormaDePagamento,
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "venda", cascade = [CascadeType.ALL], orphanRemoval = true)
     val itens : MutableList<ItemVenda> = mutableListOf()
 
 )

@@ -67,7 +67,7 @@ class CarrinhoServiceImp(
         val produto = produtoRepository.findById(itemCarrinhoDTO.produto.id)
             .orElseThrow { DataNotFoundException("Produto não encontrado") }
 
-        val itemCarrinho = ItemCarrinho(produto = produto, quantidade = itemCarrinhoDTO.quantidade)
+        val itemCarrinho = ItemCarrinho(produto = produto, quantidade = itemCarrinhoDTO.quantidade, carrinho = carrinho)
         carrinho.itens.add(itemCarrinho)
 
         carrinho = carrinhoRepository.save(carrinho)

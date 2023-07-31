@@ -26,15 +26,17 @@ class VendaServiceImpl(
 
         var venda = Venda(
             cliente = carrinho.cliente,
-            itens = carrinho.itens.map { item ->
-                ItemVenda(
-                    produto = item.produto,
-                    quantidade = item.quantidade
-                )
-            }.toMutableList(),
             valorTotal = valorTotal,
             formaDePagamento = formaDePagamento
         )
+        val itens = carrinho.itens.map { item ->
+            ItemVenda(
+                produto = item.produto,
+                quantidade = item.quantidade,
+                venda = venda
+            )
+        }.toMutableList()
+        venda.itens.addAll(itens)
 
         venda = vendaRepository.save(venda)
         carrinhoRepository.delete(carrinho)

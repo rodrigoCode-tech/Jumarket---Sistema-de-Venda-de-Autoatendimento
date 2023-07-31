@@ -12,7 +12,7 @@ data class Carrinho(
     @OneToOne
     val cliente: Cliente,
 
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "carrinho", cascade = [CascadeType.ALL], orphanRemoval = true)
     val itens: MutableList<ItemCarrinho> = mutableListOf()
 
 )
