@@ -18,6 +18,7 @@ class ClienteServiceImpl(private val clienteRepository: ClienteRepository): Clie
             nome = clienteDTO.nome,
             cpf = clienteDTO.cpf
         )
+
         val novoCliente = clienteRepository.save(cliente)
 
         return ClienteDTO(
