@@ -46,7 +46,7 @@ class VendaServiceImpl(
             .map { venda -> mapToDto(venda) }
     }
 
-    private fun calcularValorTotal(carrinho: Carrinho): Double {
+    fun calcularValorTotal(carrinho: Carrinho): Double {
         var valorTotal = 0.0
         carrinho.itens.forEach { produtoQuantidade ->
             valorTotal += produtoQuantidade.produto.precoUnitario * produtoQuantidade.quantidade
