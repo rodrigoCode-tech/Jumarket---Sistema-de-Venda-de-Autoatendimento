@@ -34,7 +34,7 @@ class CarrinhoServiceImpTest {
     private lateinit var carrinhoService: CarrinhoServiceImp
 
     @Test
-    fun `teste Abrir carrinho`() {
+    fun `test abrirCarrrinho should open a new Carrinho`() {
         val cliente = getCliente()
         val carrinho = getCarrinho(cliente)
         `when`(clienteRepository.findById(anyLong()))
